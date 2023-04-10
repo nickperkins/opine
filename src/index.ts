@@ -3,13 +3,13 @@ import { cors } from "hono/cors";
 
 type Bindings = {
 	OPINE: D1Database;
-	ALLOWED_HOST: string;
+	ACCESS_CONTROL_ALLOWED_ORIGIN: string;
 }
 
 const app = new Hono<{ Bindings: Bindings }>().basePath('/api/comments');
 app.use('*', async (c, next) => {
 	const cores = cors({
-		origin: c.env.ALLOWED_HOST,
+		origin: c.env.ACCESS_CONTROL_ALLOWED_ORIGIN,
 		//allowMethods: ['POST', 'GET', 'DELETE', 'OPTIONS'],
 		exposeHeaders: ['Content-Length', 'X-Kuma-Revision'],
 		maxAge: 600,
