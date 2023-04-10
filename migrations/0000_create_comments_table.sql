@@ -1,0 +1,7 @@
+-- Migration number: 0000 	 2023-04-10T07:40:11.405Z
+CREATE TABLE IF NOT EXISTS comments (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    author TEXT NOT NULL,
+    body TEXT NOT NULL,
+    post_slug TEXT NOT NULL
+);

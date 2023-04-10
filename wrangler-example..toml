@@ -1,0 +1,11 @@
+name = "opine"
+main = "src/index.ts"
+compatibility_date = "2023-04-10"
+
+[vars]
+ACCESS_CONTROL_ALLOWED_ORIGIN = "https://example.org"
+
+[[ d1_databases ]]
+binding = "OPINE"
+database_name = "your-db-name"
+database_id = "c4..."
