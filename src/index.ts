@@ -61,9 +61,4 @@ app.post(':slug', async (c) => {
 	return c.text(`Posted to: ${slug}`);
 });
 
-// app.delete(':slug/:comment', (c) => {
-// 	const { slug, comment } = c.req.param();
-// 	return c.text(`Deleting: ${comment} from ${slug}`);
-// });
-
 export default app;
