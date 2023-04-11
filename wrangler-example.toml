@@ -1,0 +1,9 @@
+name="opine"
+main="src/index.ts"
+
+compatibility_date = "2022-11-22"
+
+[[ d1_databases ]]
+binding = "OPINE"
+database_name = "opine"
+database_id = "c4..."

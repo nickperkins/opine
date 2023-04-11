@@ -1,9 +1,49 @@
 # Opine
 
-A very simplistic blog system for a static website. This uses Clouldflare Workers and Cloudflare D1.
+This is a minimal api for comments on a static blog, built to run on Cloudflare Workers.
+This is a proof of concept that is not suitable for production.
 
-This is very early stage experiement and should not be used in a production environment.
+This has been inspired by the [Hono blog example](https://github.com/honojs/examples/tree/main/blog)
 
-## Configuration
+## Features
 
-Copy `wrangler-example.toml` to `wrangler.toml` and update the D1 database id and the cross origin host.
+- Data stored in Cloudflare D1
+- Written in Typescript, using Hono framework
+
+## Usage
+
+Install
+
+```sh
+yarn install
+```
+
+Run migrations (Local Development)
+
+```sh
+yarn dev-migrate
+```
+
+Local Development
+
+```sh
+yarn dev
+```
+
+Test
+
+```sh
+yarn test
+```
+
+Deploy
+
+```sh
+yarn deploy
+```
+
+Run migrations
+
+```sh
+yarn migrate
+```
