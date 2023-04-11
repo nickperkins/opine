@@ -1,21 +1,23 @@
 import { Hono } from "hono";
 import { cors } from "hono/cors";
+import { prettyJSON} from "hono/pretty-json";
 
 type Bindings = {
 	OPINE: D1Database;
 	ACCESS_CONTROL_ALLOWED_ORIGIN: string;
 }
 
-const app = new Hono<{ Bindings: Bindings }>().basePath('/api/comments');
+const app = new Hono<{ Bindings: Bindings }>().basePath('/api/comments/');
+app.use('*', prettyJSON());
 app.use('*', async (c, next) => {
-	const cores = cors({
+	const cors_headers = cors({
 		origin: c.env.ACCESS_CONTROL_ALLOWED_ORIGIN,
-		//allowMethods: ['POST', 'GET', 'DELETE', 'OPTIONS'],
-		exposeHeaders: ['Content-Length', 'X-Kuma-Revision'],
+		allowMethods: ['POST', 'GET', 'DELETE', 'OPTIONS'],
+		exposeHeaders: ['Content-Length'],
 		maxAge: 600,
 		credentials: true,
 	});
-	return cores(c, next);
+	await cors_headers(c, next);
 }
 
 )
@@ -34,15 +36,34 @@ app.get(':slug', async (c) => {
 	return c.json(results);
 });
 
-app.post(':slug', (c) => {
+app.post(':slug', async (c) => {
 	const { slug } = c.req.param();
+	const { author, body } = await c.req.json();
+
+	if (!author || !body) {
+		c.status(500);
+		const response = {
+			"Error": "Required value missing"
+		}
+		return c.json(response);
+	}
+
+	const { success } = await c.env.OPINE.prepare(`
+		INSERT INTO comments (author, body, post_slug) VALUES (?, ?, ?)
+	`).bind(author, body, slug).run();
+
+	if (!success) {
+		c.status(500);
+		return c.text('Unable to save this comment!');
+		}
+
 	c.status(201);
-	return c.text(`Posting to: ${slug}`);
+	return c.text(`Posted to: ${slug}`);
 });
 
-app.delete(':slug/:comment', (c) => {
-	const { slug, comment } = c.req.param();
-	return c.text(`Deleting: ${comment} from ${slug}`);
-});
+// app.delete(':slug/:comment', (c) => {
+// 	const { slug, comment } = c.req.param();
+// 	return c.text(`Deleting: ${comment} from ${slug}`);
+// });
 
 export default app;
