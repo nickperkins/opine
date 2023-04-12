@@ -1,7 +1,7 @@
 export type Bindings = {
-    OPINE: D1Database;
-}
+  OPINE: D1Database;
+};
 
 declare global {
-    function getMiniflareBindings(): Bindings
+  function getMiniflareBindings(): Bindings;
 }
