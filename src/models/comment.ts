@@ -1,9 +1,10 @@
 import { D1Orm, DataTypes, Model } from "d1-orm";
 import type { Infer } from "d1-orm";
+import { Context } from "hono";
 
-export type Comment = Infer<typeof comments>;
+export type CommentType = Infer<typeof CommentsTable>;
 
-export const comments = new Model(
+export const CommentsTable = new Model(
   {
     tableName: "comments",
     primaryKeys: "id",
@@ -35,14 +36,14 @@ export type CommentParam = {
 };
 
 export const getComments = async (
-  DB: D1Database,
+  c: Context,
   slug: string
-): Promise<Comment[] | undefined> => {
-  const orm = new D1Orm(DB);
+): Promise<CommentType[] | undefined> => {
+  const orm = new D1Orm(c.env.OPINE);
 
-  comments.SetOrm(orm);
+  CommentsTable.SetOrm(orm);
 
-  const results = await comments.All({
+  const results = await CommentsTable.All({
     where: { post_slug: slug },
   });
 
@@ -50,7 +51,7 @@ export const getComments = async (
 };
 
 export const postComment = async (
-  DB: D1Database,
+  c: Context,
   slug: string,
   comment: CommentParam
 ): Promise<boolean> => {
@@ -58,10 +59,10 @@ export const postComment = async (
 
   if (!(comment && comment.author && comment.body)) return false;
 
-  const orm = new D1Orm(DB);
-  comments.SetOrm(orm);
+  const orm = new D1Orm(c.env.OPINE);
+  CommentsTable.SetOrm(orm);
 
-  const result = await comments.InsertOne({
+  const result = await CommentsTable.InsertOne({
     author: comment.author,
     body: comment.body,
     post_slug: slug,
