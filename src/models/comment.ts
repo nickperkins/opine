@@ -37,7 +37,7 @@ export type CommentParam = {
 export const getComments = async (
   DB: D1Database,
   slug: string
-): Promise<Comment[]> => {
+): Promise<Comment[] | undefined> => {
   const orm = new D1Orm(DB);
 
   comments.SetOrm(orm);
@@ -46,9 +46,6 @@ export const getComments = async (
     where: { post_slug: slug },
   });
 
-  if (!results.success) {
-    return [];
-  }
   return results.results;
 };
 
