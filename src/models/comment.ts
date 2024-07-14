@@ -1,33 +1,7 @@
-import { D1Orm, DataTypes, Model } from "d1-orm";
-import type { Infer } from "d1-orm";
-
-export type Comment = Infer<typeof comments>;
-
-export const comments = new Model(
-  {
-    tableName: "comments",
-    primaryKeys: "id",
-    autoIncrement: "id",
-  },
-  {
-    id: {
-      type: DataTypes.INTEGER,
-      notNull: true,
-    },
-    author: {
-      type: DataTypes.STRING,
-      notNull: true,
-    },
-    body: {
-      type: DataTypes.STRING,
-      notNull: true,
-    },
-    post_slug: {
-      type: DataTypes.STRING,
-      notNull: true,
-    },
-  }
-);
+import { PrismaClient } from "@prisma/client";
+import { PrismaD1 } from "@prisma/adapter-d1";
+import { Result } from "../types/Result";
+import { Comment } from "../types/Comment";
 
 export type CommentParam = {
   author: string;
@@ -38,35 +12,32 @@ export const getComments = async (
   DB: D1Database,
   slug: string
 ): Promise<Comment[] | undefined> => {
-  const orm = new D1Orm(DB);
+  const adapter = new PrismaD1(DB);
+  const prisma = new PrismaClient({ adapter });
 
-  comments.SetOrm(orm);
-
-  const results = await comments.All({
-    where: { post_slug: slug },
-  });
-
-  return results.results;
+  const result = await prisma.comments.findMany({ where: { post_slug: slug } });
+  return result;
 };
 
 export const postComment = async (
   DB: D1Database,
   slug: string,
   comment: CommentParam
-): Promise<boolean> => {
-  if (!slug) return false;
+): Promise<Result | Comment> => {
+  if (!slug) return { result: false, message: "No slug provided" };
 
-  if (!(comment && comment.author && comment.body)) return false;
+  if (!(comment && comment.author && comment.body))
+    return { result: false, message: "Invalid comment" };
 
-  const orm = new D1Orm(DB);
-  comments.SetOrm(orm);
+  const adapter = new PrismaD1(DB);
+  const prisma = new PrismaClient({ adapter });
 
-  const result = await comments.InsertOne({
-    author: comment.author,
-    body: comment.body,
-    post_slug: slug,
+  const result = await prisma.comments.create({
+    data: {
+      author: comment.author,
+      body: comment.body,
+      post_slug: slug,
+    },
   });
-
-  if (!result.success) return false;
-  return true;
+  return result;
 };

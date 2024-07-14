@@ -2,7 +2,7 @@ import { Hono } from "hono";
 import { cors } from "hono/cors";
 import { prettyJSON } from "hono/pretty-json";
 import * as comments from "./models/comment";
-import { Bindings } from "./bindings";
+import { Bindings } from "./global";
 
 const app = new Hono<{ Bindings: Bindings }>();
 
@@ -17,10 +17,10 @@ app.get("/comments/:slug", async (c) => {
   const { slug } = c.req.param();
 
   const result = await comments.getComments(c.env.OPINE, slug);
-
-  if (result?.length == 0) {
-    return c.body(null, 204);
-  }
+  console.log(result);
+  // if (result?.length == 0) {
+  //     return c.json({});
+  // }
   return c.json(result);
 });
 
@@ -32,10 +32,7 @@ app.post("/comments/:slug", async (c) => {
     slug,
     param as comments.CommentParam
   );
-  if (!result) {
-    return c.json({ error: "Can not create new comment", ok: false }, 422);
-  }
-  return c.json({ ok: true }, 201);
+  return c.json(result);
 });
 
 export default app;

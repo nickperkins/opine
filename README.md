@@ -7,8 +7,8 @@ This has been inspired by the [Hono blog example](https://github.com/honojs/exam
 
 ## Features
 
-- Data stored in Cloudflare D1
-- Written in Typescript, using Hono framework
+-   Data stored in Cloudflare D1
+-   Written in Typescript, using Hono framework
 
 ## Usage
 

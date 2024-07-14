@@ -1,0 +1,21 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+  previewFeatures = ["driverAdapters"]
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model comments {
+  id Int @id @default(autoincrement())
+  author String
+  body String
+  post_slug String
+  createdAt              DateTime            @default(now())
+  updatedAt              DateTime            @updatedAt
+}
